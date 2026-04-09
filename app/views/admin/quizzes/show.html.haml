@@ -1,0 +1,39 @@
+%div{ class: "flex items-center justify-between mb-6" }
+  .flex.items-center.gap-4
+    %h1.text-2xl.font-bold= @quiz.title
+    %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600" }
+      Beståelsesscore: #{@quiz.passing_score}%
+  .flex.items-center.gap-3
+    = link_to "Rediger", edit_admin_quiz_path(@quiz), class: "bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
+    - if @quiz.quizzable_type == "Section"
+      = link_to "← Tilbage til sektion", admin_section_path(@quiz.quizzable), class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"
+    - else
+      = link_to "← Tilbage til kursus", admin_course_path(@quiz.quizzable), class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"
+
+- if @quiz.description.present?
+  %p.text-sm.text-gray-500.mb-6= @quiz.description
+
+%div{ class: "flex items-center justify-between mb-4" }
+  %h2.text-lg.font-semibold Spørgsmål
+  = link_to "Tilføj spørgsmål", new_admin_quiz_question_path(quiz_id: @quiz.id), class: "bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
+
+- if @questions.any?
+  .space-y-3
+    - @questions.each do |question|
+      %div{ class: "bg-white rounded-2xl border border-gray-200 p-5" }
+        %div{ class: "flex items-start justify-between" }
+          %div.flex-1
+            .flex.items-center.gap-3.mb-2
+              %span.text-sm.font-bold.text-gray-300= "#{question.position}."
+              %span{ class: "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500" }
+                = pluralize(question.points, "point")
+            %p.text-sm.font-medium.text-gray-900.mb-2= question.question_text
+            %div
+              %p.text-xs.text-gray-400.uppercase.tracking-wider.mb-1 Forventet svar
+              %p.text-sm.text-gray-600= question.expected_answer
+          .flex.items-center.gap-2.ml-4
+            = link_to "Rediger", edit_admin_quiz_question_path(question), class: "text-sm text-gray-500 hover:text-gray-900 transition-colors"
+            = button_to "Slet", admin_quiz_question_path(question), method: :delete, class: "text-sm text-red-500 hover:text-red-700 transition-colors", data: { turbo_confirm: "Er du sikker?" }
+- else
+  %div{ class: "bg-white rounded-2xl border border-gray-200 p-8 text-center" }
+    %p.text-gray-400 Ingen spørgsmål endnu

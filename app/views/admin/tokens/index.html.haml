@@ -39,5 +39,8 @@
           %td.px-5.py-4.text-sm.text-gray-500= token.label || "—"
           %td.px-5.py-4.text-sm.text-gray-400= token.created_at.strftime("%d/%m/%Y %H:%M")
           %td.px-5.py-4.text-right
-            - unless token.revoked?
-              = button_to "Deaktiver", admin_token_path(token), method: :delete, class: "text-xs text-red-500 hover:text-red-700 transition-colors", data: { turbo_confirm: "Er du sikker?" }
+            .flex.items-center.justify-end.gap-3
+              - if token.customer
+                = button_to "Nulstil", reset_progress_admin_token_path(token), method: :patch, class: "text-xs text-amber-600 hover:text-amber-800 transition-colors", data: { turbo_confirm: "Nulstil al fremskridt for denne kunde?" }
+              - unless token.revoked?
+                = button_to "Deaktiver", admin_token_path(token), method: :delete, class: "text-xs text-red-500 hover:text-red-700 transition-colors", data: { turbo_confirm: "Er du sikker?" }

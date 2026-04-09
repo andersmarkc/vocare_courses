@@ -1,0 +1,26 @@
+%div{ class: "flex items-center justify-between mb-6" }
+  %h1.text-2xl.font-bold Rediger kursus
+  = link_to "← Tilbage", admin_course_path(@course), class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"
+
+%div{ class: "bg-white rounded-2xl border border-gray-200 p-6 max-w-2xl" }
+  = form_with model: [:admin, @course], class: "space-y-5" do |f|
+    %div
+      = f.label :title, "Titel", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+      = f.text_field :title, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+    %div
+      = f.label :slug, "Slug", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+      = f.text_field :slug, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+      %p.text-xs.text-gray-400.mt-1 Bruges i URL'en
+
+    %div
+      = f.label :description, "Beskrivelse", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+      = f.text_area :description, rows: 4, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+    %div{ class: "flex items-center gap-3" }
+      = f.check_box :published, class: "rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+      = f.label :published, "Publiceret", class: "text-sm text-gray-700"
+
+    %div{ class: "flex items-center gap-3 pt-2" }
+      = f.submit "Gem", class: "bg-gray-900 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+      = link_to "Annuller", admin_course_path(@course), class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"

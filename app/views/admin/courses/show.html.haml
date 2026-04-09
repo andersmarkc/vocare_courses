@@ -1,0 +1,66 @@
+%div{ class: "flex items-center justify-between mb-6" }
+  .flex.items-center.gap-4
+    %h1.text-2xl.font-bold= @course.title
+    - if @course.published?
+      %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600" } Publiceret
+    - else
+      %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500" } Kladde
+  .flex.items-center.gap-3
+    = link_to "Rediger", edit_admin_course_path(@course), class: "bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
+    = link_to "← Tilbage", admin_courses_path, class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"
+
+- if @course.description.present?
+  %p.text-sm.text-gray-500.mb-6= @course.description
+
+-# Sections list
+%div{ class: "flex items-center justify-between mb-4" }
+  %h2.text-lg.font-semibold Sektioner
+  = link_to "Tilføj sektion", new_admin_section_path(course_id: @course.id), class: "bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
+
+- if @sections.any?
+  .space-y-3
+    - @sections.each do |section|
+      %div{ class: "bg-white rounded-2xl border border-gray-200 p-5" }
+        %div{ class: "flex items-center justify-between" }
+          .flex.items-center.gap-4
+            %span{ class: "text-sm font-bold text-gray-300 w-8" }= section.position
+            %div
+              = link_to section.title, admin_section_path(section), class: "font-medium text-gray-900 hover:underline"
+              %p.text-sm.text-gray-400.mt-1
+                = pluralize(section.lessons.size, "lektion", "lektioner")
+                - if section.quiz
+                  %span.mx-1 ·
+                  %span{ class: "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600" } Quiz
+                - else
+                  %span.mx-1 ·
+                  %span{ class: "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-600" } Ingen quiz
+          .flex.items-center.gap-2
+            - unless section.position == @sections.first.position
+              = button_to "↑", move_admin_section_path(section, direction: "up"), method: :patch, class: "text-gray-400 hover:text-gray-900 px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+            - unless section.position == @sections.last.position
+              = button_to "↓", move_admin_section_path(section, direction: "down"), method: :patch, class: "text-gray-400 hover:text-gray-900 px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+            = link_to "Vis", admin_section_path(section), class: "text-sm text-gray-500 hover:text-gray-900 transition-colors ml-2"
+            = link_to "Rediger", edit_admin_section_path(section), class: "text-sm text-gray-500 hover:text-gray-900 transition-colors"
+- else
+  %div{ class: "bg-white rounded-2xl border border-gray-200 p-8 text-center" }
+    %p.text-gray-400 Ingen sektioner endnu
+
+-# Final quiz
+%div{ class: "mt-8" }
+  %div{ class: "flex items-center justify-between mb-4" }
+    %h2.text-lg.font-semibold Afsluttende quiz
+    - unless @course.final_quiz
+      = link_to "Opret quiz", new_admin_quiz_path(course_id: @course.id), class: "bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
+  - if @course.final_quiz
+    %div{ class: "bg-white rounded-2xl border border-gray-200 p-5" }
+      %div{ class: "flex items-center justify-between" }
+        %div
+          = link_to @course.final_quiz.title, admin_quiz_path(@course.final_quiz), class: "font-medium text-gray-900 hover:underline"
+          %p.text-sm.text-gray-400.mt-1
+            = pluralize(@course.final_quiz.quiz_questions.size, "spørgsmål")
+            %span.mx-1 ·
+            Beståelsesscore: #{@course.final_quiz.passing_score}%
+        = link_to "Vis", admin_quiz_path(@course.final_quiz), class: "text-sm text-gray-500 hover:text-gray-900 transition-colors"
+  - else
+    %div{ class: "bg-white rounded-2xl border border-gray-200 p-8 text-center" }
+      %p.text-gray-400 Ingen afsluttende quiz endnu

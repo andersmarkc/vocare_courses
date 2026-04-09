@@ -1,0 +1,67 @@
+= form_with model: [:admin, @lesson], class: "space-y-5" do |f|
+  = f.hidden_field :section_id, value: @section.id
+
+  - if @lesson.errors.any?
+    %div{ class: "bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm" }
+      %ul.list-disc.list-inside
+        - @lesson.errors.full_messages.each do |msg|
+          %li= msg
+
+  %div
+    = f.label :title, "Titel", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.text_field :title, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  %div
+    = f.label :slug, "Slug", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.text_field :slug, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+    %p.text-xs.text-gray-400.mt-1 Udfyldes automatisk fra titlen hvis den er tom
+
+  %div
+    = f.label :content_type, "Indholdstype", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.select :content_type, [["Video", "video"], ["Audio", "audio"], ["Tekst", "text"]], {}, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900", data: { lesson_type_select: true }
+
+  %div{ data: { content_type_field: "video" }, style: (@lesson.video? ? "" : "display: none") }
+    = f.label :video_url, "Video URL", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.text_field :video_url, placeholder: "https://player.vimeo.com/video/...", class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  %div{ data: { content_type_field: "audio" }, style: (@lesson.audio? ? "" : "display: none") }
+    = f.label :audio_file, "Lydfil (MP3)", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.file_field :audio_file, accept: "audio/*", class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+    - if @lesson.persisted? && @lesson.audio_file.attached?
+      %p.text-xs.text-gray-400.mt-1
+        Nuværende fil: #{@lesson.audio_file.filename}
+
+  %div{ data: { content_type_field: "text" }, style: (@lesson.text? ? "" : "display: none") }
+    = f.label :body, "Indhold", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.text_area :body, rows: 12, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 font-mono"
+
+  %div{ data: { content_type_field: "video" }, style: (@lesson.video? ? "" : "display: none") }
+    = f.label :duration_seconds, "Varighed (sekunder)", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.number_field :duration_seconds, min: 0, class: "w-32 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  %div{ data: { content_type_field: "audio" }, style: (@lesson.audio? ? "" : "display: none") }
+    = f.label :duration_seconds, "Varighed (sekunder)", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.number_field :duration_seconds, min: 0, class: "w-32 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  %div
+    = f.label :position, "Position", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.number_field :position, min: 1, class: "w-24 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  %div{ class: "flex items-center gap-3 pt-2" }
+    = f.submit (@lesson.persisted? ? "Gem" : "Opret"), class: "bg-gray-900 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+    = link_to "Annuller", admin_section_path(@section), class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"
+
+:javascript
+  document.addEventListener('DOMContentLoaded', function() {
+    var select = document.querySelector('[data-lesson-type-select]');
+    if (!select) return;
+
+    function toggleFields() {
+      var value = select.value;
+      document.querySelectorAll('[data-content-type-field]').forEach(function(el) {
+        el.style.display = el.dataset.contentTypeField === value ? '' : 'none';
+      });
+    }
+
+    select.addEventListener('change', toggleFields);
+  });

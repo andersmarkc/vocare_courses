@@ -1,0 +1,42 @@
+%div{ class: "flex items-center justify-between mb-6" }
+  .flex.items-center.gap-4
+    %h1.text-2xl.font-bold= @lesson.title
+    - case @lesson.content_type
+    - when "video"
+      %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600" } Video
+    - when "audio"
+      %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600" } Audio
+    - when "text"
+      %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600" } Tekst
+  .flex.items-center.gap-3
+    = link_to "Rediger", edit_admin_lesson_path(@lesson), class: "bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
+    = link_to "← Tilbage", admin_section_path(@lesson.section), class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"
+
+%div{ class: "bg-white rounded-2xl border border-gray-200 p-6 max-w-3xl" }
+  %dl.space-y-4
+    %div
+      %dt.text-xs.text-gray-400 Slug
+      %dd.text-sm.mt-1.font-mono= @lesson.slug
+
+    - if @lesson.duration_seconds.present? && @lesson.duration_seconds > 0
+      %div
+        %dt.text-xs.text-gray-400 Varighed
+        %dd.text-sm.mt-1= "#{@lesson.duration_seconds / 60} min #{@lesson.duration_seconds % 60} sek"
+
+    - if @lesson.video?
+      %div
+        %dt.text-xs.text-gray-400 Video URL
+        %dd.text-sm.mt-1= @lesson.video_url
+
+    - if @lesson.audio? && @lesson.audio_file.attached?
+      %div
+        %dt.text-xs.text-gray-400 Lydfil
+        %dd.mt-2
+          %audio{ controls: true, class: "w-full" }
+            %source{ src: url_for(@lesson.audio_file), type: @lesson.audio_file.content_type }
+
+    - if @lesson.text? && @lesson.body.present?
+      %div
+        %dt.text-xs.text-gray-400 Indhold
+        %dd.text-sm.mt-2.prose.prose-sm.max-w-none
+          = simple_format(@lesson.body)

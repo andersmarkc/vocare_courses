@@ -7,4 +7,12 @@ class Section < ApplicationRecord
   validates :title, presence: true
   validates :slug, presence: true, uniqueness: { scope: :course_id }
   validates :position, presence: true, uniqueness: { scope: :course_id }
+
+  before_validation :generate_slug, if: -> { slug.blank? && title.present? }
+
+  private
+
+  def generate_slug
+    self.slug = title.parameterize
+  end
 end

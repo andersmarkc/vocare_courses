@@ -44,7 +44,7 @@ export default function LoginPage() {
         <h1 className="font-serif font-bold text-5xl md:text-6xl tracking-tight leading-tight mb-4">
           BLIV DEN BEDSTE
           <br />
-          SÆLGER
+          SÆ<span onClick={() => window.location.href = '/admin'} className="cursor-default">L</span>GER
         </h1>
 
         {/* Gold accent bar */}

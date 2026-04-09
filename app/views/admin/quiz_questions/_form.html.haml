@@ -1,0 +1,30 @@
+= form_with model: [:admin, @question], class: "space-y-5" do |f|
+  = f.hidden_field :quiz_id, value: @quiz.id
+
+  - if @question.errors.any?
+    %div{ class: "bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm" }
+      %ul.list-disc.list-inside
+        - @question.errors.full_messages.each do |msg|
+          %li= msg
+
+  %div
+    = f.label :question_text, "Spørgsmål", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.text_area :question_text, rows: 3, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  %div
+    = f.label :expected_answer, "Forventet svar", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.text_area :expected_answer, rows: 4, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+    %p.text-xs.text-gray-400.mt-1 AI bruger dette som reference til at evaluere kundens svar
+
+  %div{ class: "grid grid-cols-2 gap-4" }
+    %div
+      = f.label :points, "Point", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+      = f.number_field :points, min: 1, class: "w-24 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+    %div
+      = f.label :position, "Position", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+      = f.number_field :position, min: 1, class: "w-24 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  %div{ class: "flex items-center gap-3 pt-2" }
+    = f.submit (@question.persisted? ? "Gem" : "Opret"), class: "bg-gray-900 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+    = link_to "Annuller", admin_quiz_path(@quiz), class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"

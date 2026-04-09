@@ -1,6 +1,7 @@
 module Api
   module V1
     class BaseController < ApplicationController
+      skip_before_action :verify_authenticity_token
       before_action :authenticate_customer!
 
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found

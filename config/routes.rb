@@ -9,8 +9,19 @@ Rails.application.routes.draw do
     root "dashboard#index"
     resources :tokens, except: [ :edit, :update ] do
       collection { post :batch_generate }
+      member { patch :reset_progress }
     end
     resources :customers, only: [ :index, :show ]
+
+    resources :courses, only: [ :index, :show, :edit, :update ]
+    resources :sections, except: [ :index ] do
+      member { patch :move }
+    end
+    resources :lessons, except: [ :index ] do
+      member { patch :move }
+    end
+    resources :quizzes, only: [ :show, :new, :create, :edit, :update ]
+    resources :quiz_questions, except: [ :index, :show ]
   end
 
   # Student API (JSON)

@@ -10,4 +10,12 @@ class Lesson < ApplicationRecord
   validates :content_type, presence: true
   validates :position, presence: true, uniqueness: { scope: :section_id }
   validates :video_url, presence: true, if: :video?
+
+  before_validation :generate_slug, if: -> { slug.blank? && title.present? }
+
+  private
+
+  def generate_slug
+    self.slug = title.parameterize
+  end
 end
