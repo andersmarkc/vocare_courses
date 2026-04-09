@@ -146,3 +146,30 @@ Only one external API: OpenAI (for quiz evaluation). The `Ai::Client` is a Farad
 6. Overall `quiz_attempt.score` and `quiz_attempt.passed` calculated
 7. `quiz_attempt.completed_at` set
 8. Frontend polls `GET /api/v1/quiz_attempts/:id` until `completed_at` present
+
+Note: `evaluate_quiz_answer_job.rb` does not exist — all evaluation is done inline within `EvaluateQuizAttemptJob`.
+
+---
+
+## Production Infrastructure
+
+```
+GitHub (main) → GitHub Actions → git push → bare repo (post-receive hook)
+                                                ↓
+                                         ~/vocare_courses/
+                                                ↓
+                              bundle install + npm install + assets:precompile + db:migrate
+                                                ↓
+                                    systemctl restart puma + solid_queue
+```
+
+- **Server:** bowser-stack (188.34.142.134), Ubuntu 24.04
+- **User:** `vocare` (shared with existing vocare.dk app)
+- **Ruby:** 3.4.3 via rbenv
+- **Node:** 23 via fnm (for Vite asset compilation)
+- **Database:** PostgreSQL (`vocare_courses_production`), password via credentials
+- **App server:** Puma (5 workers, unix socket)
+- **Background jobs:** Solid Queue (systemd service)
+- **Reverse proxy:** Nginx → unix socket
+- **SSL:** Let's Encrypt via certbot
+- **Domain:** kursus.vocare.dk

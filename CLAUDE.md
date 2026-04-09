@@ -35,6 +35,15 @@ bin/rubocop -a   # auto-fix style (also runs automatically via hook on every .rb
 bundle exec rspec spec/path/to/file_spec.rb
 ```
 
+## Deployment
+
+- **Production:** https://kursus.vocare.dk/
+- **Server:** bowser-stack (Ubuntu 24.04), user `vocare`, home `/home/vocare/`
+- **Deploy:** push to `main` → GitHub Actions → git push to bare repo → post-receive hook
+- **Services:** `puma_vocare_courses.service`, `vocare_courses_solid_queue.service`
+- **Credentials:** default `credentials.yml.enc` with `master.key` (not environment-specific)
+- **Admin:** https://kursus.vocare.dk/admin (admin@vocare.dk / password123 — change in production!)
+
 ---
 
 ## Stack
