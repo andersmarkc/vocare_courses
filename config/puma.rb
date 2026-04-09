@@ -5,7 +5,7 @@ environment(current_rails_env)
 
 # Default to production
 if current_rails_env == ("production")
-  workers 10
+  workers 5
   threads 5, 10
 
   app_dir = File.expand_path("../..", __FILE__)
