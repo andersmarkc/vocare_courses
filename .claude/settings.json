@@ -1,0 +1,66 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bin/ci 2>&1)",
+      "Bash(bin/ci)",
+      "Bash(bin/dev)",
+      "Bash(bin/rubocop -a 2>&1)",
+      "Bash(bin/rubocop -a)",
+      "Bash(bin/rubocop 2>&1)",
+      "Bash(bin/rubocop)",
+      "Bash(bin/rails --version)",
+      "Bash(bin/rails generate:*)",
+      "Bash(bin/rails db:migrate 2>&1)",
+      "Bash(bin/rails db:migrate)",
+      "Bash(bin/rails db:seed 2>&1)",
+      "Bash(bin/rails db:create 2>&1)",
+      "Bash(bin/rails db:create)",
+      "Bash(bin/rails routes 2>&1)",
+      "Bash(bundle install:*)",
+      "Bash(bundle exec:*)",
+      "Bash(bundle info:*)",
+      "Bash(bundle update:*)",
+      "Bash(npm install:*)",
+      "Bash(npm init:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(echo \"$CLAUDE_TOOL_INPUT\" | jq -r '.file_path // .new_path // empty' 2>/dev/null); if [ -n \"$FILE\" ] && echo \"$FILE\" | grep -qE '\\.rb$'; then bundle exec rubocop -a \"$FILE\" --format quiet 2>/dev/null || true; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); ACTIVE=$(echo \"$INPUT\" | jq -r '.stop_hook_active' 2>/dev/null); if [ \"$ACTIVE\" = 'true' ]; then exit 0; fi; echo \"--- Session complete. Did you run bin/ci before finishing? If not, run it now. ---\" >&2; exit 0",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"{\\\"additionalContext\\\": \\\"Current git branch: $(git branch --show-current 2>/dev/null || echo 'unknown'). Uncommitted changes: $(git status --porcelain 2>/dev/null | wc -l | tr -d ' ') files.\\\"}\"",
+            "async": false
+          }
+        ]
+      }
+    ]
+  }
+}

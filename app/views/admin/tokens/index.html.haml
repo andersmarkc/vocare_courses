@@ -1,0 +1,43 @@
+%div{ class: "flex items-center justify-between mb-6" }
+  %h1.text-2xl.font-bold Tokens
+  .flex.items-center.gap-3
+    = link_to "Opret token", new_admin_token_path, class: "bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
+    = form_with url: batch_generate_admin_tokens_path, method: :post, class: "flex items-center gap-2" do |f|
+      = f.number_field :count, value: 10, min: 1, max: 100, class: "w-20 border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+      = f.text_field :label, placeholder: "Label (valgfrit)", class: "border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+      = f.submit "Batch opret", class: "bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+
+%div{ class: "bg-white rounded-2xl border border-gray-200 overflow-hidden" }
+  %table.w-full
+    %thead
+      %tr.border-b.border-gray-100
+        %th.px-5.py-3.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Kode
+        %th.px-5.py-3.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Status
+        %th.px-5.py-3.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Kunde
+        %th.px-5.py-3.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Label
+        %th.px-5.py-3.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Oprettet
+        %th.px-5.py-3
+    %tbody
+      - @tokens.each do |token|
+        %tr{ class: "border-b border-gray-50 hover:bg-gray-50 transition-colors" }
+          %td.px-5.py-4
+            = link_to token.code, admin_token_path(token), class: "font-mono text-sm text-gray-900 font-medium hover:underline"
+          %td.px-5.py-4
+            - if token.revoked?
+              %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-600" } Deaktiveret
+            - elsif token.expired?
+              %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-600" } Udløbet
+            - elsif token.activated?
+              %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600" } Aktiv
+            - else
+              %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500" } Ubrugt
+          %td.px-5.py-4.text-sm
+            - if token.customer
+              = link_to token.customer.name, admin_customer_path(token.customer), class: "text-gray-900 hover:underline"
+            - else
+              %span.text-gray-300 —
+          %td.px-5.py-4.text-sm.text-gray-500= token.label || "—"
+          %td.px-5.py-4.text-sm.text-gray-400= token.created_at.strftime("%d/%m/%Y %H:%M")
+          %td.px-5.py-4.text-right
+            - unless token.revoked?
+              = button_to "Deaktiver", admin_token_path(token), method: :delete, class: "text-xs text-red-500 hover:text-red-700 transition-colors", data: { turbo_confirm: "Er du sikker?" }

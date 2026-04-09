@@ -1,0 +1,42 @@
+%div{ class: "flex items-center justify-between mb-6" }
+  %h1.text-2xl.font-bold Token detaljer
+  = link_to "← Tilbage", admin_tokens_path, class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"
+
+%div{ class: "bg-white rounded-2xl border border-gray-200 p-8 max-w-lg" }
+  %dl.space-y-5
+    %div
+      %dt.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Kode
+      %dd.text-xl.font-mono.font-bold.mt-1= @token.code
+    %div
+      %dt.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Status
+      %dd.mt-1
+        - if @token.revoked?
+          %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-600" } Deaktiveret
+        - elsif @token.expired?
+          %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-600" } Udløbet
+        - elsif @token.activated?
+          %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600" } Aktiv
+        - else
+          %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500" } Ubrugt
+    - if @token.label.present?
+      %div
+        %dt.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Label
+        %dd.mt-1= @token.label
+    - if @token.customer
+      %div
+        %dt.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Kunde
+        %dd.mt-1= link_to @token.customer.name, admin_customer_path(@token.customer), class: "text-gray-900 hover:underline"
+    %div
+      %dt.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Oprettet
+      %dd.mt-1= @token.created_at.strftime("%d/%m/%Y %H:%M")
+    - if @token.activated_at
+      %div
+        %dt.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Aktiveret
+        %dd.mt-1= @token.activated_at.strftime("%d/%m/%Y %H:%M")
+    - if @token.expires_at
+      %div
+        %dt.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Udløber
+        %dd.mt-1= @token.expires_at.strftime("%d/%m/%Y %H:%M")
+    %div
+      %dt.text-xs.font-medium.text-gray-400.uppercase.tracking-wider Oprettet af
+      %dd.mt-1= @token.created_by.email

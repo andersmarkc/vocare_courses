@@ -1,0 +1,65 @@
+%div{ class: "flex items-center justify-between mb-6" }
+  %h1.text-2xl.font-bold= @customer.name
+  = link_to "← Tilbage", admin_customers_path, class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"
+
+%div{ class: "grid grid-cols-1 md:grid-cols-2 gap-6" }
+
+  %div{ class: "bg-white rounded-2xl border border-gray-200 p-6" }
+    %h2.text-sm.font-semibold.text-gray-400.uppercase.tracking-wider.mb-4 Kundeinformation
+    %dl.space-y-4
+      %div
+        %dt.text-xs.text-gray-400 Email
+        %dd.text-sm.mt-1= @customer.email || "—"
+      %div
+        %dt.text-xs.text-gray-400 Telefon
+        %dd.text-sm.mt-1= @customer.phone || "—"
+      %div
+        %dt.text-xs.text-gray-400 Virksomhed
+        %dd.text-sm.mt-1= @customer.company || "—"
+      %div
+        %dt.text-xs.text-gray-400 Oprettet
+        %dd.text-sm.mt-1= @customer.created_at.strftime("%d/%m/%Y %H:%M")
+
+  - if @tracker && @course
+    %div{ class: "bg-white rounded-2xl border border-gray-200 p-6" }
+      %h2.text-sm.font-semibold.text-gray-400.uppercase.tracking-wider.mb-4 Fremskridt
+      - progress = @tracker.course_progress(@course)
+      %dl.space-y-4
+        %div
+          %dt.text-xs.text-gray-400 Sektioner
+          %dd.text-sm.font-medium.mt-1= "#{progress[:completed_sections]} / #{progress[:total_sections]}"
+        %div
+          %dt.text-xs.text-gray-400 Lektioner
+          %dd.text-sm.font-medium.mt-1= "#{progress[:completed_lessons]} / #{progress[:total_lessons]}"
+        %div
+          %dt.text-xs.text-gray-400 Samlet fremskridt
+          %dd.mt-2
+            .flex.items-center.gap-3
+              %div{ class: "flex-1 bg-gray-100 rounded-full h-2" }
+                %div{ class: "bg-gray-900 h-2 rounded-full transition-all", style: "width: #{progress[:percentage]}%" }
+              %span.text-sm.font-semibold= "#{progress[:percentage]}%"
+
+- if @quiz_attempts.any?
+  %div{ class: "bg-white rounded-2xl border border-gray-200 p-6 mt-6" }
+    %h2.text-sm.font-semibold.text-gray-400.uppercase.tracking-wider.mb-4 Quiz forsøg
+    %table.w-full
+      %thead
+        %tr.border-b.border-gray-100
+          %th.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider.pb-3 Quiz
+          %th.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider.pb-3 Score
+          %th.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider.pb-3 Resultat
+          %th.text-left.text-xs.font-medium.text-gray-400.uppercase.tracking-wider.pb-3 Dato
+      %tbody
+        - @quiz_attempts.each do |attempt|
+          %tr.border-b.border-gray-50
+            %td.py-3.text-sm= attempt.quiz.title
+            %td.py-3.text-sm.font-medium= attempt.score ? "#{attempt.score}%" : "—"
+            %td.py-3
+              - if attempt.completed?
+                - if attempt.passed?
+                  %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600" } Bestået
+                - else
+                  %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-600" } Ikke bestået
+              - else
+                %span{ class: "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-600" } Evaluering...
+            %td.py-3.text-sm.text-gray-400= attempt.started_at.strftime("%d/%m/%Y %H:%M")

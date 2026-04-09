@@ -1,14 +1,47 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Admin auth — login at /admin/sign_in
+  devise_for :admin_users, path: "admin", controllers: {
+    sessions: "admin_users/sessions"
+  }
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Admin namespace
+  namespace :admin do
+    root "dashboard#index"
+    resources :tokens, except: [ :edit, :update ] do
+      collection { post :batch_generate }
+    end
+    resources :customers, only: [ :index, :show ]
+  end
+
+  # Student API (JSON)
+  namespace :api do
+    namespace :v1 do
+      post "auth/login", to: "auth#login"
+      delete "auth/logout", to: "auth#logout"
+      get "auth/me", to: "auth#me"
+
+      resources :courses, only: [ :show ], param: :slug
+      resources :sections, only: [ :show ]
+      resources :lessons, only: [ :show ] do
+        resource :progress, only: [ :create ], controller: "progress"
+      end
+      get "progress/summary", to: "progress#summary"
+
+      resources :quizzes, only: [ :show ] do
+        resources :attempts, only: [ :create ], controller: "quiz_attempts"
+      end
+      resources :quiz_attempts, only: [ :show, :update ]
+    end
+  end
+
+  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  # Student SPA (React handles client-side routing)
+  root "home#index"
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Catch-all for React Router (must be last)
+  get "*path", to: "home#index", constraints: ->(req) {
+    !req.path.start_with?("/admin", "/api", "/up", "/rails")
+  }
 end

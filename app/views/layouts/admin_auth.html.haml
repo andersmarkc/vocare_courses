@@ -1,0 +1,15 @@
+!!! 5
+%html{ lang: "da" }
+  %head
+    %title= "Admin Login — Vocare Courses"
+    %meta{ name: "viewport", content: "width=device-width,initial-scale=1" }
+    = csrf_meta_tags
+    = csp_meta_tag
+    %link{ rel: "preconnect", href: "https://fonts.googleapis.com" }
+    %link{ rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true }
+    %link{ rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" }
+    = vite_client_tag
+    = vite_stylesheet_tag "admin.css"
+
+  %body.bg-gray-50.font-sans.antialiased.text-gray-900
+    = yield

@@ -1,0 +1,26 @@
+%h1.text-2xl.font-bold.mb-8 Dashboard
+
+%div{ class: "grid grid-cols-1 md:grid-cols-3 gap-6" }
+  %div{ class: "bg-white rounded-2xl border border-gray-200 p-6" }
+    %p.text-xs.font-medium.text-gray-400.uppercase.tracking-wider.mb-3 Tokens i alt
+    %p.text-4xl.font-bold.text-gray-900= @stats[:total_tokens]
+    .flex.gap-4.mt-4.text-sm
+      %span.text-emerald-600
+        %strong= @stats[:active_tokens]
+        aktive
+      %span.text-gray-400
+        %strong= @stats[:unused_tokens]
+        ubrugte
+
+  %div{ class: "bg-white rounded-2xl border border-gray-200 p-6" }
+    %p.text-xs.font-medium.text-gray-400.uppercase.tracking-wider.mb-3 Kunder
+    %p.text-4xl.font-bold.text-gray-900= @stats[:total_customers]
+
+  %div{ class: "bg-white rounded-2xl border border-gray-200 p-6" }
+    %p.text-xs.font-medium.text-gray-400.uppercase.tracking-wider.mb-3 Quiz forsøg
+    %p.text-4xl.font-bold.text-gray-900= @stats[:total_quiz_attempts]
+    - if @stats[:total_quiz_attempts] > 0
+      %p.text-sm.text-emerald-600.mt-4
+        %strong= @stats[:passed_quiz_attempts]
+        bestået
+        = "(#{(@stats[:passed_quiz_attempts].to_f / @stats[:total_quiz_attempts] * 100).round}%)"

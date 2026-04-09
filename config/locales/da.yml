@@ -1,0 +1,14 @@
+da:
+  devise:
+    sessions:
+      signed_in: "Du er nu logget ind."
+      signed_out: "Du er nu logget ud."
+      already_signed_out: "Du er allerede logget ud."
+      admin_user:
+        signed_in: "Du er nu logget ind som administrator."
+    passwords:
+      send_instructions: "Du vil modtage en email med instruktioner om at nulstille din adgangskode."
+      updated: "Din adgangskode er blevet opdateret."
+    failure:
+      invalid: "Ugyldig email eller adgangskode."
+      unauthenticated: "Du skal logge ind for at fortsætte."
