@@ -43,25 +43,42 @@ A MasterClass-inspired course platform for Vocare's Danish B2B phone sales train
 
 ## Current Phase
 
-**Phase 7: Polish & Deploy** — All core features built. Final polish needed.
+**Phase 6: Integration Testing & Bug Fixes** — Code is written but not yet validated end-to-end in browser.
 
-### Completed
-- [x] Phase 1: Foundation — CLAUDE.md, Vite, React, Tailwind, RSpec, 12 DB tables, seed data
-- [x] Phase 2: Authentication — Token services (Generator, Authenticator), Student API auth, Admin Devise
-- [x] Phase 3: Course Content API — Courses, Sections, Lessons, Progress tracking, Quiz endpoints, section unlock logic
-- [x] Phase 3b: Admin Dashboard — Dashboard stats, Token CRUD + batch generate, Customer list + progress detail
-- [x] Phase 4: AI services — Ai::Client, Ai::QuizEvaluator, EvaluateQuizAttemptJob (async via Solid Queue)
-- [x] Phase 5: React Frontend — MasterClass-inspired dark design:
-  - LoginPage: bold serif heading, gold accent, token input with first-use name fields
-  - DashboardPage: "Velkommen tilbage", progress ring (SVG), section mini-overview
-  - CoursePage: section grid with lock/unlock/complete cards
-  - SectionPage: lesson list with icons + quiz card
-  - LessonPage: video/audio/text player + sidebar navigation (MasterClass layout)
-  - QuizPage: free-text questions, AI evaluation polling, score results, retry
-  - Navbar, ProgressRing, SectionCard, LessonSidebar, Icons (shared components)
-  - useAuth (context provider), useProgress, useApi hooks
-  - React Router with protected routes
-- [x] 35 specs passing, 0 rubocop offenses, 0 brakeman warnings
+### Completed (code written & compiles)
+- [x] Phase 1: Foundation — CLAUDE.md structure (root + 4 subdirectory + 7 docs), Vite + React + Tailwind, RSpec + FactoryBot + WebMock, 12 DB tables, seed data (8 sections, 19 lessons, 21 quiz questions)
+- [x] Phase 2: Authentication — `Tokens::Generator`, `Tokens::Authenticator`, Student API auth (login/logout/me), Admin Devise with custom sessions controller
+- [x] Phase 3: Course Content API — 8 API controllers (auth, courses, sections, lessons, progress, quizzes, quiz_attempts), `Progress::Tracker` with section unlock logic
+- [x] Phase 3b: Admin Dashboard — Dashboard stats, Token CRUD + batch generate, Customer list + detail with progress view. Consistent gray-900 monochrome design, separate `admin.css` entrypoint
+- [x] Phase 4: AI services — `Ai::Client` (Faraday → OpenAI), `Ai::QuizEvaluator` (Danish prompts, JSON response), `EvaluateQuizAttemptJob`
+- [x] Phase 5: React Frontend (code written, compiles, NOT browser-tested):
+  - 6 pages: LoginPage, DashboardPage, CoursePage, SectionPage, LessonPage, QuizPage
+  - 5 shared: Navbar, ProgressRing, SectionCard, LessonSidebar, Icons
+  - 3 hooks: useAuth.jsx (AuthProvider context), useProgress.js, useApi.js
+  - React Router with protected routes, Danish URLs (/kursus, /sektion, /lektion, /quiz)
+- [x] 35 backend specs passing, 0 rubocop offenses, 0 brakeman warnings
+- [x] Documentation updated with HAML+Tailwind lessons learned
 
-### Next
-- Phase 7: Polish (Danish i18n, error states, loading states, responsive pass, deploy config)
+### NOT yet validated
+- [ ] Full student flow in browser: login → dashboard → course → section → lesson → mark complete → quiz → AI evaluation → section unlock
+- [ ] API response shapes match what React components expect (likely bugs here)
+- [ ] Quiz submission + OpenAI evaluation works end-to-end (needs API key in credentials)
+- [ ] Progress tracking actually updates UI after marking lessons complete
+- [ ] Section lock/unlock visually works after passing quiz
+- [ ] Responsive design on mobile/tablet
+- [ ] Admin flow: create token → customer uses it → admin sees customer progress
+
+### Next session: start here
+1. **`bin/dev`** — run the app and test the student flow manually in browser
+2. **Fix API/React mismatches** — likely response shape bugs between controllers and components
+3. **Add OpenAI API key** — `bin/rails credentials:edit` → add `openai.api_key` for quiz evaluation
+4. **Test quiz flow** — submit answers → verify async evaluation → verify results display
+5. **Test admin flow** — generate token → use it as customer → check admin sees progress
+
+### Phase 7 (after testing is green)
+- Danish i18n for remaining strings
+- Error states & empty states in React
+- Responsive design pass (mobile sidebar, form layouts)
+- GitHub Actions CI/CD pipeline
+- Loading skeleton states
+- Final `bin/ci` pass + commit
