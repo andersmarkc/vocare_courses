@@ -29,7 +29,8 @@ module Api
           },
           section: {
             id: lesson.section.id,
-            title: lesson.section.title
+            title: lesson.section.title,
+            position: lesson.section.position
           }
         }
       end
