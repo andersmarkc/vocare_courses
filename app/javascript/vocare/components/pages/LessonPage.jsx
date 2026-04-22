@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import useApi from '../../hooks/useApi'
 import useProgress from '../../hooks/useProgress'
 import useAuth from '../../hooks/useAuth'
@@ -54,7 +54,6 @@ function TextContent({ body }) {
 
 export default function LessonPage() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const { request } = useApi()
   const { markComplete } = useProgress()
   const { refreshProgress } = useAuth()
@@ -62,6 +61,7 @@ export default function LessonPage() {
   const [progress, setProgress] = useState(null)
   const [section, setSection] = useState(null)
   const [sectionLessons, setSectionLessons] = useState([])
+  const [nextTarget, setNextTarget] = useState(null)
   const [completing, setCompleting] = useState(false)
 
   const loadLesson = useCallback(async () => {
@@ -69,6 +69,7 @@ export default function LessonPage() {
     setLesson(data.lesson)
     setProgress(data.progress)
     setSection(data.section)
+    setNextTarget(data.next_target)
 
     const sectionData = await request(`/api/v1/sections/${data.section.id}`)
     setSectionLessons(sectionData.lessons)
@@ -96,8 +97,21 @@ export default function LessonPage() {
     )
   }
 
-  const currentIdx = sectionLessons.findIndex((l) => l.id === lesson.id)
-  const nextLesson = sectionLessons[currentIdx + 1]
+  const nextHref = nextTarget
+    ? nextTarget.type === 'quiz'
+      ? ROUTES.quiz(nextTarget.id)
+      : nextTarget.type === 'section'
+        ? ROUTES.section(nextTarget.id)
+        : ROUTES.lesson(nextTarget.id)
+    : null
+
+  const nextLabel = nextTarget
+    ? nextTarget.type === 'quiz'
+      ? `Gå til ${nextTarget.title.toLowerCase()}`
+      : nextTarget.section_title
+        ? `Næste kapitel: ${nextTarget.section_title}`
+        : `Næste lektion: ${nextTarget.title}`
+    : null
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)]">
@@ -147,14 +161,14 @@ export default function LessonPage() {
             </div>
           </div>
 
-          {/* Next lesson button */}
-          {nextLesson && (
+          {/* Next target button — always points forward in the flow */}
+          {nextTarget && (
             <Link
-              to={ROUTES.lesson(nextLesson.id)}
-              className="mt-6 flex items-center gap-2 text-text-secondary hover:text-accent text-sm transition-colors"
+              to={nextHref}
+              className="mt-8 inline-flex items-center gap-2 bg-surface hover:bg-surface-light border border-white/10 hover:border-accent/40 rounded-lg px-5 py-3 text-sm font-medium transition-all group"
             >
-              Næste lektion: {nextLesson.title}
-              <ArrowRightIcon className="w-4 h-4" />
+              <span>{nextLabel}</span>
+              <ArrowRightIcon className="w-4 h-4 text-accent group-hover:translate-x-0.5 transition-transform" />
             </Link>
           )}
 

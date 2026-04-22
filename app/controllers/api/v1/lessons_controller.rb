@@ -2,7 +2,7 @@ module Api
   module V1
     class LessonsController < BaseController
       def show
-        lesson = Lesson.includes(:section).find(params[:id])
+        lesson = Lesson.includes(section: :course).find(params[:id])
         tracker = Progress::Tracker.new(current_customer)
 
         unless tracker.section_unlocked?(lesson.section)
@@ -31,8 +31,41 @@ module Api
             id: lesson.section.id,
             title: lesson.section.title,
             position: lesson.section.position
-          }
+          },
+          next_target: next_target_for(lesson)
         }
+      end
+
+      private
+
+      def next_target_for(lesson)
+        section = lesson.section
+        next_lesson = section.lessons.where("position > ?", lesson.position).order(:position).first
+        return { type: "lesson", id: next_lesson.id, title: next_lesson.title } if next_lesson
+
+        if section.quiz
+          return { type: "quiz", id: section.quiz.id, title: "Sektionsquiz" }
+        end
+
+        next_section = section.course.sections.where("position > ?", section.position).order(:position).first
+        if next_section
+          first_lesson = next_section.lessons.order(:position).first
+          if first_lesson
+            return {
+              type: "lesson",
+              id: first_lesson.id,
+              title: first_lesson.title,
+              section_title: next_section.title
+            }
+          end
+          return { type: "section", id: next_section.id, title: next_section.title }
+        end
+
+        if (final_quiz = section.course.final_quiz)
+          return { type: "quiz", id: final_quiz.id, title: "Afsluttende quiz" }
+        end
+
+        nil
       end
     end
   end
