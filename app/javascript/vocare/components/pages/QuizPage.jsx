@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import useApi from '../../hooks/useApi'
 import useAuth from '../../hooks/useAuth'
 import { SpinnerIcon, CheckCircleIcon, AcademicCapIcon } from '../Icons'
+import { ROUTES } from '../../lib/routes'
 
 function QuestionInput({ question, value, onChange, disabled }) {
   return (
@@ -57,6 +58,7 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState({})
   const [attempt, setAttempt] = useState(null)
   const [attemptAnswers, setAttemptAnswers] = useState([])
+  const [nextTarget, setNextTarget] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [evaluating, setEvaluating] = useState(false)
   const [error, setError] = useState(null)
@@ -70,6 +72,7 @@ export default function QuizPage() {
         .then((data) => {
           setAttempt(data.attempt)
           setAttemptAnswers(data.answers)
+          setNextTarget(data.next_target)
           if (!data.attempt.completed_at) setEvaluating(true)
         })
         .catch((err) => setError(err.message))
@@ -92,6 +95,7 @@ export default function QuizPage() {
           clearInterval(pollRef.current)
           setAttempt(data.attempt)
           setAttemptAnswers(data.answers)
+          setNextTarget(data.next_target)
           setEvaluating(false)
           refreshProgress()
         }
@@ -178,6 +182,22 @@ export default function QuizPage() {
 
   // Results state
   if (attempt?.completed_at) {
+    const nextHref = nextTarget
+      ? nextTarget.type === 'quiz'
+        ? ROUTES.quiz(nextTarget.id)
+        : nextTarget.type === 'section'
+          ? ROUTES.section(nextTarget.id)
+          : ROUTES.lesson(nextTarget.id)
+      : ROUTES.dashboard
+
+    const continueLabel = nextTarget
+      ? nextTarget.section_title
+        ? `Fortsæt til ${nextTarget.section_title}`
+        : nextTarget.type === 'quiz'
+          ? `Gå til ${nextTarget.title.toLowerCase()}`
+          : 'Fortsæt'
+      : 'Tilbage til kursus'
+
     return (
       <div className="max-w-3xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
@@ -205,20 +225,29 @@ export default function QuizPage() {
         </div>
 
         <div className="flex justify-center gap-4">
-          {!attempt.passed && (
-            <button
-              onClick={handleRetry}
+          {attempt.passed ? (
+            <Link
+              to={nextHref}
               className="bg-accent hover:bg-accent-hover text-black font-semibold rounded-lg px-8 py-3 transition-colors"
             >
-              Prøv igen
-            </button>
+              {continueLabel}
+            </Link>
+          ) : (
+            <>
+              <button
+                onClick={handleRetry}
+                className="bg-accent hover:bg-accent-hover text-black font-semibold rounded-lg px-8 py-3 transition-colors"
+              >
+                Prøv igen
+              </button>
+              <button
+                onClick={() => navigate(-1)}
+                className="border border-white/20 text-white rounded-lg px-8 py-3 hover:bg-surface-light transition-colors"
+              >
+                Tilbage til lektion
+              </button>
+            </>
           )}
-          <button
-            onClick={() => navigate(-1)}
-            className="border border-white/20 text-white rounded-lg px-8 py-3 hover:bg-surface-light transition-colors"
-          >
-            {attempt.passed ? 'Fortsæt' : 'Tilbage til lektion'}
-          </button>
         </div>
       </div>
     )
