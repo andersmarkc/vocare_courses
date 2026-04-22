@@ -108,8 +108,8 @@ export default function LessonPage() {
   const nextLabel = nextTarget
     ? nextTarget.type === 'quiz'
       ? `Gå til ${nextTarget.title.toLowerCase()}`
-      : nextTarget.section_title
-        ? `Næste kapitel: ${nextTarget.section_title}`
+      : nextTarget.type === 'section'
+        ? `Næste kapitel: ${nextTarget.title}`
         : `Næste lektion: ${nextTarget.title}`
     : null
 

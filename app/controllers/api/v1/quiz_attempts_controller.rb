@@ -64,23 +64,11 @@ module Api
         case quizzable
         when Section
           next_section = quizzable.course.sections.where("position > ?", quizzable.position).order(:position).first
-          if next_section
-            first_lesson = next_section.lessons.order(:position).first
-            if first_lesson
-              return {
-                type: "lesson",
-                id: first_lesson.id,
-                title: first_lesson.title,
-                section_title: next_section.title
-              }
-            end
-            return { type: "section", id: next_section.id, title: next_section.title }
-          end
+          return { type: "section", id: next_section.id, title: next_section.title } if next_section
+
           if (final_quiz = quizzable.course.final_quiz)
             return { type: "quiz", id: final_quiz.id, title: "Afsluttende quiz" }
           end
-          nil
-        else
           nil
         end
       end

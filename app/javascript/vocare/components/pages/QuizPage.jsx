@@ -191,8 +191,8 @@ export default function QuizPage() {
       : ROUTES.dashboard
 
     const continueLabel = nextTarget
-      ? nextTarget.section_title
-        ? `Fortsæt til ${nextTarget.section_title}`
+      ? nextTarget.type === 'section'
+        ? `Fortsæt til ${nextTarget.title}`
         : nextTarget.type === 'quiz'
           ? `Gå til ${nextTarget.title.toLowerCase()}`
           : 'Fortsæt'
