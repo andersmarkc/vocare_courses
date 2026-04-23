@@ -66,7 +66,7 @@ module Admin
     private
 
     def lesson_params
-      params.require(:lesson).permit(:title, :slug, :content_type, :body, :video_url,
+      params.require(:lesson).permit(:title, :slug, :content_type, :body, :intro, :video_url,
                                      :position, :duration_seconds, :audio_file, :section_id)
     end
   end

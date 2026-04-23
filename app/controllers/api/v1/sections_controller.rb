@@ -2,7 +2,7 @@ module Api
   module V1
     class SectionsController < BaseController
       def show
-        section = Section.includes(:lessons).find(params[:id])
+        section = Section.includes(:lessons, :facta_boxes).find(params[:id])
         tracker = Progress::Tracker.new(current_customer)
 
         unless tracker.section_unlocked?(section)
@@ -22,6 +22,10 @@ module Api
           }
         end
 
+        facta_boxes = section.facta_boxes.map do |box|
+          { id: box.id, title: box.title, body: box.body, position: box.position }
+        end
+
         render json: {
           section: {
             id: section.id,
@@ -31,6 +35,7 @@ module Api
             position: section.position
           },
           lessons: lessons,
+          facta_boxes: facta_boxes,
           quiz_id: section.quiz&.id
         }
       end

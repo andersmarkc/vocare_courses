@@ -4,6 +4,7 @@ import useApi from '../../hooks/useApi'
 import useProgress from '../../hooks/useProgress'
 import useAuth from '../../hooks/useAuth'
 import LessonSidebar from '../LessonSidebar'
+import RichHtml from '../RichHtml'
 import { CheckCircleIcon, ArrowRightIcon } from '../Icons'
 import { ROUTES } from '../../lib/routes'
 
@@ -42,12 +43,7 @@ function AudioPlayer({ audioUrl }) {
 function TextContent({ body }) {
   return (
     <div className="bg-surface rounded-xl border border-white/10 p-8">
-      <div
-        className="prose prose-invert prose-sm max-w-none text-text-secondary leading-relaxed"
-        style={{ whiteSpace: 'pre-wrap' }}
-      >
-        {body}
-      </div>
+      <RichHtml html={body} className="text-text-secondary leading-relaxed" />
     </div>
   )
 }
@@ -118,6 +114,11 @@ export default function LessonPage() {
       {/* Main content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-6 py-8">
+          {/* Intro — shown on all lesson types, above the main content */}
+          {lesson.intro && (
+            <RichHtml html={lesson.intro} className="text-text-secondary mb-6" />
+          )}
+
           {/* Content area */}
           {lesson.content_type === 'video' && lesson.video_url && (
             <VideoPlayer videoUrl={lesson.video_url} />
@@ -174,9 +175,7 @@ export default function LessonPage() {
 
           {/* Body text for video/audio lessons */}
           {lesson.content_type !== 'text' && lesson.body && (
-            <div className="mt-8 text-text-secondary text-sm leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>
-              {lesson.body}
-            </div>
+            <RichHtml html={lesson.body} className="mt-8 text-text-secondary text-sm leading-relaxed" />
           )}
         </div>
       </div>

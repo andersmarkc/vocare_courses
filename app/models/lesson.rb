@@ -1,4 +1,6 @@
 class Lesson < ApplicationRecord
+  include HasRichText
+
   belongs_to :section
   has_many :lesson_progresses, dependent: :destroy
   has_one_attached :audio_file
@@ -12,6 +14,8 @@ class Lesson < ApplicationRecord
   validates :video_url, presence: true, if: :video?
 
   before_validation :generate_slug, if: -> { slug.blank? && title.present? }
+
+  sanitize_rich_text :body, :intro
 
   private
 

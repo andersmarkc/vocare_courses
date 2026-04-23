@@ -3,6 +3,7 @@ module Admin
     def show
       @section = Section.find(params[:id])
       @lessons = @section.lessons.order(:position)
+      @facta_boxes = @section.facta_boxes.order(:position)
       @quiz = @section.quiz
     end
 

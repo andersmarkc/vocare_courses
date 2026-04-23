@@ -22,3 +22,77 @@ body {
   color: var(--color-text-primary);
   font-family: var(--font-sans);
 }
+
+/* Typography for admin-authored rich HTML.
+   Rails sanitizes this server-side (HasRichText concern) so the allow-list is
+   small — we hand-roll minimal typography rather than pulling in the Tailwind
+   typography plugin. */
+.rich-html {
+  line-height: 1.7;
+}
+.rich-html p {
+  margin: 0 0 1em;
+}
+.rich-html p:last-child { margin-bottom: 0; }
+.rich-html h2 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 1.5em 0 0.5em;
+}
+.rich-html h2:first-child { margin-top: 0; }
+.rich-html h3 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 1.3em 0 0.4em;
+}
+.rich-html h4 {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 1em 0 0.3em;
+}
+.rich-html ul,
+.rich-html ol {
+  padding-left: 1.4em;
+  margin: 0 0 1em;
+}
+.rich-html ul { list-style: disc; }
+.rich-html ol { list-style: decimal; }
+.rich-html li { margin: 0.25em 0; }
+.rich-html a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.rich-html a:hover { color: var(--color-accent-hover); }
+.rich-html blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1em;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin: 1em 0;
+}
+.rich-html strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+.rich-html em { font-style: italic; }
+.rich-html code {
+  background: var(--color-surface-light);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--color-text-primary);
+}
+.rich-html pre {
+  background: var(--color-surface-light);
+  padding: 0.8em 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1em 0;
+  font-size: 0.9em;
+}
+.rich-html pre code { background: none; padding: 0; }

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :courses, only: [ :index, :show, :edit, :update ]
     resources :sections, except: [ :index ] do
       member { patch :move }
+      resources :facta_boxes, except: [ :index, :show ]
     end
     resources :lessons, except: [ :index ] do
       member { patch :move }

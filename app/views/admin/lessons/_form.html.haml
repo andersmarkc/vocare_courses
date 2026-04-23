@@ -20,6 +20,8 @@
     = f.label :content_type, "Indholdstype", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
     = f.select :content_type, [["Video", "video"], ["Audio", "audio"], ["Tekst", "text"]], {}, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900", data: { lesson_type_select: true }
 
+  = render "admin/shared/rich_text_field", f: f, field: :intro, label: "Introduktion", hint: "Vises over videoen/lyden/teksten på lektionens side."
+
   %div{ data: { content_type_field: "video" }, style: (@lesson.video? ? "" : "display: none") }
     = f.label :video_url, "Video URL", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
     = f.text_field :video_url, placeholder: "https://player.vimeo.com/video/...", class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
@@ -32,8 +34,7 @@
         Nuværende fil: #{@lesson.audio_file.filename}
 
   %div{ data: { content_type_field: "text" }, style: (@lesson.text? ? "" : "display: none") }
-    = f.label :body, "Indhold", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
-    = f.text_area :body, rows: 12, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 font-mono"
+    = render "admin/shared/rich_text_field", f: f, field: :body, label: "Indhold"
 
   %div{ data: { content_type_field: "video" }, style: (@lesson.video? ? "" : "display: none") }
     = f.label :duration_seconds, "Varighed (sekunder)", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"

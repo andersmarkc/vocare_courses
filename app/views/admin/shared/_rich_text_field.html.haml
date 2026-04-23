@@ -1,0 +1,16 @@
+-# Renders a TipTap-backed rich text field.
+-# f      — form builder
+-# field  — symbol attribute name (e.g. :body)
+-# label  — display label text
+-# hint   — optional helper text below the editor
+- textarea_id = "#{f.object_name.tr('[]', '_').chomp('_')}_#{field}"
+
+%div
+  = f.label field, label, class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+  = f.text_area field, class: "hidden", data: { rich_textarea: true }, id: textarea_id
+  %div{ class: "border border-gray-200 rounded-xl bg-white overflow-hidden focus-within:ring-2 focus-within:ring-gray-900 focus-within:border-gray-900",
+        data: { rich_editor: true, textarea_id: textarea_id } }
+    -# Placeholder shown before JS mounts — React replaces the shell contents on mount.
+    %div{ class: "px-4 py-3 text-sm text-gray-300" } Indlæser editor…
+  - if local_assigns[:hint]
+    %p.text-xs.text-gray-400.mt-1= hint

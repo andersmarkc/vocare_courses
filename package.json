@@ -10,6 +10,11 @@
     "vite-plugin-ruby": "^5.2.1"
   },
   "dependencies": {
+    "@tiptap/extension-link": "^3.22.4",
+    "@tiptap/extension-underline": "^3.22.4",
+    "@tiptap/pm": "^3.22.4",
+    "@tiptap/react": "^3.22.4",
+    "@tiptap/starter-kit": "^3.22.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.0"

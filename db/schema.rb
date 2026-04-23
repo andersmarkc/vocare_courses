@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_110528) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_23_100151) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -76,6 +76,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_110528) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "facta_boxes", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.integer "position", null: false
+    t.bigint "section_id", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["section_id", "position"], name: "index_facta_boxes_on_section_id_and_position"
+    t.index ["section_id"], name: "index_facta_boxes_on_section_id"
+  end
+
   create_table "lesson_progresses", force: :cascade do |t|
     t.boolean "completed", default: false, null: false
     t.datetime "completed_at"
@@ -94,6 +105,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_110528) do
     t.string "content_type", null: false
     t.datetime "created_at", null: false
     t.integer "duration_seconds"
+    t.text "intro"
     t.integer "position", null: false
     t.bigint "section_id", null: false
     t.string "slug", null: false
@@ -197,6 +209,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_110528) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "facta_boxes", "sections"
   add_foreign_key "lesson_progresses", "customers"
   add_foreign_key "lesson_progresses", "lessons"
   add_foreign_key "lessons", "sections"

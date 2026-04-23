@@ -18,6 +18,7 @@ module Api
             slug: lesson.slug,
             content_type: lesson.content_type,
             body: lesson.body,
+            intro: lesson.intro,
             video_url: lesson.video_url,
             duration_seconds: lesson.duration_seconds,
             position: lesson.position,

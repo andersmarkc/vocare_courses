@@ -1,0 +1,20 @@
+= form_with model: [:admin, @section, @facta_box], class: "space-y-5" do |f|
+  - if @facta_box.errors.any?
+    %div{ class: "bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm" }
+      %ul.list-disc.list-inside
+        - @facta_box.errors.full_messages.each do |msg|
+          %li= msg
+
+  %div
+    = f.label :title, "Titel", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.text_field :title, class: "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  = render "admin/shared/rich_text_field", f: f, field: :body, label: "Indhold"
+
+  %div
+    = f.label :position, "Position", class: "block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2"
+    = f.number_field :position, min: 1, class: "w-24 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+
+  %div{ class: "flex items-center gap-3 pt-2" }
+    = f.submit (@facta_box.persisted? ? "Gem" : "Opret"), class: "bg-gray-900 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+    = link_to "Annuller", admin_section_path(@section), class: "text-sm text-gray-400 hover:text-gray-900 transition-colors"

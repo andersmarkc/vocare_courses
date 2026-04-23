@@ -1,6 +1,9 @@
 class Section < ApplicationRecord
+  include HasRichText
+
   belongs_to :course
   has_many :lessons, -> { order(:position) }, dependent: :destroy, inverse_of: :section
+  has_many :facta_boxes, -> { order(:position) }, dependent: :destroy, inverse_of: :section
   has_one :quiz, as: :quizzable, dependent: :destroy
   has_many :section_progresses, dependent: :destroy
 
@@ -9,6 +12,8 @@ class Section < ApplicationRecord
   validates :position, presence: true, uniqueness: { scope: :course_id }
 
   before_validation :generate_slug, if: -> { slug.blank? && title.present? }
+
+  sanitize_rich_text :description
 
   private
 
